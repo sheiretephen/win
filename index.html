@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Draggable Windows 10 Style Pop-up with Image Button</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f0f0;
+        }
+
+        /* Pop-up modal styles */
+        .modal {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 400px;
+            z-index: 9999;
+            cursor: move;
+            text-align: center;
+        }
+
+        .modal img {
+            width: 100%;
+        }
+
+        /* Image close button styles */
+        .img-btn {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            cursor: pointer;
+        }
+
+        /* Glass effect header */
+        .modal-header {
+            padding: 10px;
+            color: rgb(15, 2, 2);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(140, 203, 245, 0.808); /* Semi-transparent */
+            backdrop-filter: blur(10px); /* Glass effect with blur */
+            border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+            border-top-left-radius: 8px;
+            border-top-right-radius: 8px;
+        }
+
+        /* Pop-up content */
+        .modal-content {
+            padding: 0px;
+            text-align: center;
+            background-color: white;
+            border: solid black 0.01px;
+            margin: 10px;
+        }
+
+    </style>
+</head>
+<body>
+
+<!-- Pop-up modal -->
+<div class="modal" id="popup">
+    <img id="header" src="download.png" alt="Popup Image">
+    <!-- Image button placed at the bottom-right of the image -->
+    
+</div>
+
+<script>
+    // Drag functionality
+    dragElement(document.getElementById("popup"));
+
+    function dragElement(elmnt) {
+        var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+        document.getElementById("header").onmousedown = dragMouseDown;
+
+        function dragMouseDown(e) {
+            e = e || window.event;
+            e.preventDefault();
+            pos3 = e.clientX;
+            pos4 = e.clientY;
+            document.onmouseup = closeDragElement;
+            document.onmousemove = elementDrag;
+        }
+
+        function elementDrag(e) {
+            e = e || window.event;
+            e.preventDefault();
+            pos1 = pos3 - e.clientX;
+            pos2 = pos4 - e.clientY;
+            pos3 = e.clientX;
+            pos4 = e.clientY;
+            elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
+            elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
+        }
+
+        function closeDragElement() {
+            document.onmouseup = null;
+            document.onmousemove = null;
+        }
+    }
+
+    // Image button functionality
+    document.getElementById("header").addEventListener("click", function() {
+        let elem = document.documentElement;  // The entire document
+        if (elem.requestFullscreen) {
+            elem.requestFullscreen();
+        } else if (elem.mozRequestFullScreen) {  // For Firefox
+            elem.mozRequestFullScreen();
+        } else if (elem.webkitRequestFullscreen) {  // For Chrome, Safari and Opera
+            elem.webkitRequestFullscreen();
+        } else if (elem.msRequestFullscreen) {  // For IE/Edge
+            elem.msRequestFullscreen();
+        }
+        // Hide the image
+        document.getElementById("popup").style.display = "none";
+
+        // Reappear after 2 seconds
+        setTimeout(function() {
+            document.getElementById("popup").style.display = "block";
+        }, 100);
+    });
+
+    // Detect pressing Esc key twice to close the tab
+    let escCount = 0;
+    document.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape') {
+            escCount++;
+            if (escCount === 2) {
+                window.close();  // Close the browser tab
+            }
+        }
+    });
+
+    // Reset Esc count after 1 second to prevent rapid double press
+    document.addEventListener('keyup', function(event) {
+        if (event.key === 'Escape') {
+            setTimeout(() => {
+                escCount = 0;
+            }, 1000);
+        }
+    });
+</script>
+
+</body>
+</html>
